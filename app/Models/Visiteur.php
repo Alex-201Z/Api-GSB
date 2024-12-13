@@ -8,11 +8,14 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * Class Visiteur
- * 
+ *
  * @property int $id_visiteur
  * @property int|null $id_laboratoire
  * @property int|null $id_secteur
@@ -26,14 +29,16 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $pwd_visiteur
  * @property string|null $type_visiteur
  * @property string|null $login_visiteur
- * 
+ *
  * @property Laboratoire|null $laboratoire
  * @property Collection|Frai[] $frais
  *
  * @package App\Models
  */
-class Visiteur extends Model
-{
+class Visiteur extends Authenticatable{
+    use HasApiTokens;
+
+    protected $hidden = ['pwd_visiteur','remember_token'];
 	protected $table = 'visiteur';
 	protected $primaryKey = 'id_visiteur';
 	public $timestamps = false;
@@ -68,4 +73,8 @@ class Visiteur extends Model
 	{
 		return $this->hasMany(Frai::class, 'id_visiteur');
 	}
+    public function getAuthPassword()
+    {
+        return $this->pwd_visiteur;
+    }
 }
